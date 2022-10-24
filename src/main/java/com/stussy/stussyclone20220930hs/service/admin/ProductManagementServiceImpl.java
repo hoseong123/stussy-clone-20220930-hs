@@ -27,10 +27,9 @@ public class ProductManagementServiceImpl implements ProductManagementService {
 
     @Override
     public void registerMst(ProductRegisterReqDto productRegisterReqDto) throws Exception{
-        if(productManagementRepository.saveProductMst(productRegisterReqDto.toEntity()) ==0){
+        if(productManagementRepository.saveProductMst(productRegisterReqDto.toEntity()) == 0) {
             throw new CustomInternalServerErrorException("상품 등록 실패");
         }
-
     }
 
 }
