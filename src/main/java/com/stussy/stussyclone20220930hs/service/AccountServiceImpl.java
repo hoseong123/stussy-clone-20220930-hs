@@ -5,7 +5,6 @@ import com.stussy.stussyclone20220930hs.dto.RegisterReqDto;
 import com.stussy.stussyclone20220930hs.exception.CustomInternalServerErrorException;
 import com.stussy.stussyclone20220930hs.exception.CustomValidationException;
 import com.stussy.stussyclone20220930hs.repository.AccountRepository;
-import com.stussy.stussyclone20220930hs.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

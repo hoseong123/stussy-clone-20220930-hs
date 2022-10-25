@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAop {
 
-    @Pointcut("execution(* com.stussy.stussyclone20220930junil.api.*Api.*(..))")
+    @Pointcut("execution(* com.stussy.stussyclone20220930hs.api.*Api.*(..))")
     private void pointCut() {}
 
-    @Pointcut("@annotation(com.stussy.stussyclone20220930junil.aop.annotation.LogAspect)")
+    @Pointcut("@annotation(com.stussy.stussyclone20220930hs.aop.annotation.LogAspect)")
     private void annotionPointCut() {}
 
     @Around("annotionPointCut()")

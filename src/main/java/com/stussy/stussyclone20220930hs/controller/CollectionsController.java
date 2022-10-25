@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class CollectionsController {
-    @GetMapping("/controller/{category}")
-    public String loadCollections(@PathVariable String category){
-        return "product/collections_number";
+
+    @GetMapping("/collections/{category}")
+    public String loadCollections(@PathVariable String category) {
+        return "product/collections_scroll";
     }
 }
