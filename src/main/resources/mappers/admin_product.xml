@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
@@ -20,10 +19,11 @@
         from
         pdt_category_mst
     </select>
+
     <insert id="saveProductMst" parameterType="com.stussy.stussyclone20220930hs.domain.Product">
         insert into
-            product_mst
-        values
+        pdt_mst
+        values(
         0,
         #{pdt_name},
         #{category_id},
@@ -35,17 +35,57 @@
         #{pdt_shipping_info},
         now(),
         now()
-        }
+        )
     </insert>
-    
+
     <select id="getProductMstList" resultType="com.stussy.stussyclone20220930hs.domain.OptionProductMst">
         select
-            pm.id as pdt_id,
-            pcm.category_name as category,
-            pm.pdt_name
+        pm.id as pdt_id,
+        pcm.category_name as category,
+        pm.pdt_name
         from
-            pdt_mst pm
-            left outer join pdt_category_mst pcm on(pcm.id = pm.category_id)
+        pdt_mst pm
+        left outer join pdt_category_mst pcm on(pcm.id = pm.category_id)
     </select>
+
+    <select id="getSizeList" parameterType="Integer" resultType="com.stussy.stussyclone20220930hs.domain.OptionProductSize">
+        select
+        psd.id as size_id,
+        psm.size_name
+        from
+        pdt_mst pm
+        left outer join pdt_category_mst pcm on(pcm.id = pm.category_id)
+        left outer join pdt_size_dtl psd on(psd.group_id = pcm.group_id)
+        left outer join pdt_size_mst psm on(psm.id = psd.size_id)
+        where
+        pm.id = #{productId}
+    </select>
+    <select id="findProductColor"
+            parameterType="com.stussy.stussyclone20220930hs.domain.ProductDetail"
+            resultType="Integer">
+        select
+            count(*)
+        from
+            pdt_dtl
+        where
+            pdt_id = #{pdt_id}
+        and size_id = #{size_id}
+        and pdt_color = #{pdt_color}
+    </select>
+
+    <insert id="saveProductDtl" parameterType="com.stussy.stussyclone20220930hs.domain.ProductDetail">
+        insert into
+            pdt_dtl
+        values{
+            0,
+            #{pdt_id},
+            #{size_id},
+            #{pdt_color},
+            #{pdt_stock},
+            now(),
+            now()
+        )
+    </insert>
+
 
 </mapper>
