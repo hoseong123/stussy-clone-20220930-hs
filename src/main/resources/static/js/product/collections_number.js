@@ -97,9 +97,10 @@ class PageNumber {
                     CollectionsService.getInstance().loadCollections();
 
                 }else {
+                    const nowPage = CollectionsService.getInstance().collectionsEntity.page;
                     if(button.textContent != nowPage){
-                    CollectionsService.getInstance().collectionsEntity.page = button.textContent;
-                    CollectionsService.getInstance().loadCollections();
+                        CollectionsService.getInstance().collectionsEntity.page = button.textContent;
+                        CollectionsService.getInstance().loadCollections();
                     }
                 }
             }

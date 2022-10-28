@@ -36,21 +36,21 @@ class CollectionsApi {
 }
 
 class pageScroll {
-    constructor(){
+    constructor() {
         this.addScrollPagingEvent();
     }
-    
-    addScrollPageEvent() {
+     
+    addScrollPagingEvent() {
         const html = document.querySelector("html");
         const body = document.querySelector("body");
 
-        window.onscroll = () => {
-            // console.log("문서 전체 높이:" + body.offsetHeight);
-            // console.log("눈에 보이는 영역 높이:" + html.clientHeight);
-            // console.log("스크롤의 상단 위치:" + html.scrollTop);
+        body.onscroll = () => {
+            // console.log("문서 전체 높이: " + body.offsetHeight);
+            // console.log("눈에 보이는 영역 높이: " + html.clientHeight);
+            // console.log("스크롤의 상단 위치: " + html.scrollTop);
             let scrollStatus = body.offsetHeight - html.clientHeight - html.scrollTop;
-            console.log("현재 스크롤 상태: "+ scrollStatus);
-            if(scrollStatus > -1 && scrollStatus < 50) {
+            console.log("현재 스크롤 상태: " + scrollStatus);
+            if(scrollStatus > -50 && scrollStatus < 50) {
                 const nowPage = CollectionsService.getInstance().collectionsEntity.page;
                 CollectionsService.getInstance().collectionsEntity.page = Number(nowPage) + 1;
                 CollectionsService.getInstance().loadCollections();
@@ -71,6 +71,10 @@ class CollectionsService {
         return this.#instance;
     }
 
+    constructor() {
+        new pageScroll();
+    }
+
     collectionsEntity = {
         page: 1,
         totalCount: 0,
@@ -78,18 +82,18 @@ class CollectionsService {
     }
 
     loadCollections() {
-        if(this.collectionsEntity.page == 1 || this.collectionsEntity.page < maxPage + 1){
+        if(this.collectionsEntity.page == 1 || this.collectionsEntity.page < Number(this.collectionsEntity.maxPage) + 1) {
             const responseData = CollectionsApi.getInstance().getCollections(this.collectionsEntity.page);
             console.log(responseData);
             if(responseData.length > 0) {
                 this.collectionsEntity.totalCount = responseData[0].productTotalCount;
-                this.collectionsEntity.maxPage = responseData[0].productTotalCount % 16 == 0 ?
-                                                responseData[0].productTotalCount / 16
+                this.collectionsEntity.maxPage = responseData[0].productTotalCount % 16 == 0 
+                                                ? responseData[0].productTotalCount / 16
                                                 : Math.floor(responseData[0].productTotalCount / 16) + 1;
                 this.getCollections(responseData);
             }else {
-            alert("해당 카테고리에 등록된 상품 정보가 없습니다.");
-            location.href = "/collections/all";
+                alert("해당 카테고리에 등록된 상품 정보가 없습니다.");
+                location.href = "/collections/all";
             }
         }
     }
@@ -101,7 +105,7 @@ class CollectionsService {
             collectionProducts.innerHTML += `
             <li class="collection-product">
                 <div class="product-img">
-                    <img src="/static/images/product/1924840_PUTT_1_720x.png">
+                    <img src="/static/upload/product/${product.mainImg}">
                 </div>
                 <div class="product-name">
                     ${product.productName}
@@ -118,5 +122,7 @@ class CollectionsService {
 
 window.onload = () => {
     CollectionsService.getInstance().loadCollections();
-    new pageScroll();
+    
 }
+
+

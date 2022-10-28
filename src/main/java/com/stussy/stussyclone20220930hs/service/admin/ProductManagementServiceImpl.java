@@ -8,6 +8,8 @@ import com.stussy.stussyclone20220930hs.repository.admin.ProductManagementReposi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,8 +24,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ProductManagementServiceImpl implements ProductManagementService {
 
-    @Value("${file path}")
-    private String filePath;
+    private final ResourceLoader resourceLoader;
 
     private final ProductManagementRepository productManagementRepository;
 
@@ -72,39 +73,62 @@ public class ProductManagementServiceImpl implements ProductManagementService {
             throw new CustomValidationException("Duplicated Error", errorMap);
         }
     }
+
     @Override
     public void registerDtl(ProductRegisterDtlReqDto productRegisterDtlReqDto) throws Exception {
-        if(productManagementRepository.saveProductDtl(productRegisterDtlReqDto.toEntity()) ==0) {
+        if(productManagementRepository.saveProductDtl(productRegisterDtlReqDto.toEntity()) == 0) {
             throw new CustomInternalServerErrorException("상품 등록 오류");
         }
-     }
-     @Override
-    public void registerImg(ProductImgReqDto productImgReqDto) throws Exception {
-        log.info("pdtId >>>" + productImgReqDto.getPdtId());
+    }
 
-        if(productImgReqDto.getFiles() == null){
+
+    @Override
+    public void registerImg(ProductImgReqDto productImgReqDto) throws Exception {
+        log.info("pdtId >>> " + productImgReqDto.getPdtId());
+
+        if(productImgReqDto.getFiles() == null) {
             Map<String, String> errorMap = new HashMap<String, String>();
-            errorMap.put("error", "이미지를 등록해주세요.");
+            errorMap.put("error", "이미지를 선택하지 않았습니다.");
             throw new CustomValidationException("Img Error", errorMap);
         }
 
+        List<ProductImg> productImgs = new ArrayList<ProductImg>();
+
         productImgReqDto.getFiles().forEach(file -> {
+            Resource resource = resourceLoader.getResource("classpath:/static/upload");
+            String filePath = null;
+
+            try {
+                if(!resource.exists()){
+                    String tempPath = resourceLoader.getResource("classpath:static").getURI().toString();
+                    tempPath = tempPath.substring(tempPath.indexOf("/") + 1);
+                    File f = new File(tempPath + "/upload/product");
+                    f.mkdirs();
+                }
+                filePath = resource.getURI().toString();
+
+                filePath = filePath.substring(filePath.indexOf("/")+1);
+                System.out.println(filePath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             String originName = file.getOriginalFilename();
             String extension = originName.substring(originName.lastIndexOf("."));
-            String saveName = UUID.randomUUID().toString().replaceAll("-", "")+extension;
+            String saveName = UUID.randomUUID().toString().replaceAll("-", "") + extension;
 
-            Path path = Paths.get(filePath+ "product/" + saveName);
+            Path path = Paths.get(filePath + "product/" + saveName);
 
             File f = new File(filePath + "product");
-            if(f.exists()){
+            if(!f.exists()) {
                 f.mkdirs();
-
             }
+
             try {
                 Files.write(path, file.getBytes());
             } catch (IOException e) {
                 throw new CustomInternalServerErrorException(e.getMessage());
             }
+
             productImgs.add(ProductImg.builder()
                     .pdt_id(productImgReqDto.getPdtId())
                     .origin_name(originName)
@@ -113,6 +137,6 @@ public class ProductManagementServiceImpl implements ProductManagementService {
         });
 
         productManagementRepository.saveProductImg(productImgs);
-     }
-
+    }
 }
+
