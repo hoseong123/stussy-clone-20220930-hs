@@ -71,15 +71,22 @@ class CollectionsService {
         return this.#instance;
     }
 
-    constructor() {
-        new pageScroll();
-    }
+    pdtIdList = null;
+
+
 
     collectionsEntity = {
         page: 1,
         totalCount: 0,
         maxPage: 0
     }
+    constructor() {
+        new pageScroll();
+        this.pdtIdList = new Array(); 
+    }
+
+
+
 
     loadCollections() {
         if(this.collectionsEntity.page == 1 || this.collectionsEntity.page < Number(this.collectionsEntity.maxPage) + 1) {
@@ -116,6 +123,18 @@ class CollectionsService {
             </li>
             `;
         });
+
+        this.addProductListEvent();
+    }
+
+    addProductListEvent() {
+        const collectionProducts = document.querySelectorAll(".collection-product");
+
+        collectionProducts.forEach((product, index) => {
+            product.onclick = () => {
+                location.href = "/product/" + responseData[index];
+            }
+        });
     }
 
 }
@@ -124,5 +143,3 @@ window.onload = () => {
     CollectionsService.getInstance().loadCollections();
     
 }
-
-
