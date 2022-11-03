@@ -1,7 +1,7 @@
-
 package com.stussy.stussyclone20220930hs.service;
 
 import com.stussy.stussyclone20220930hs.domain.Product;
+import com.stussy.stussyclone20220930hs.dto.CheckoutRespDto;
 import com.stussy.stussyclone20220930hs.dto.CollectionListRespDto;
 import com.stussy.stussyclone20220930hs.dto.ProductRespDto;
 import com.stussy.stussyclone20220930hs.exception.CustomValidationException;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -81,5 +82,10 @@ public class ProductServiceImpl implements ProductService {
                 .pdtImgs(pdtImgs)
                 .build();
         return dto;
+    }
+
+    @Override
+    public CheckoutRespDto getCheckoutProduct(int pdtDtlId) throws Exception {
+        return productRepository.getPaymentProduct(pdtDtlId).toDto();
     }
 }
